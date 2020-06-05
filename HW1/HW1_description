@@ -1,0 +1,16 @@
+Project 
+
+get simulator downloaded and have the quadrotor hover in place 
+
+have opencv compute good features to track and plot those features 
+controller.py 
+
+launch file that specifically does not launch the node that you want to debug and then debug that node within whichever editor you are using. Run the launch file first and then run degugger on that node. 
+
+controller to make it hover in place, and good features to track,  
+
+aircraft hover and liftoff, 
+
+make something like mavsim main file, 
+
+Show video on youtube of working model 

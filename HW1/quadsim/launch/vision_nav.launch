@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- whether to launch pre-configured rqt_plot window -->
+  <arg name="plot" value="false"/>
+
+
+  <!-- quadsim -->
+
+  <include file="$(find quadsim)/launch/quadsim_base.launch">
+    <arg name="plot" value="$(arg plot)"/>
+  </include>
+
+  <node name="velocity_controller" pkg="quadsim" type="velocity_controller_node.py" output="screen" required="true"/>
+  <node name="feature_tracker" pkg="quadsim" type="feature_tracker_node.py" output="screen" required="true"/>
+  <node name="imu_integrator" pkg="quadsim" type="imu_integrator_node.py" output="screen" required="true"/>
+
+</launch>

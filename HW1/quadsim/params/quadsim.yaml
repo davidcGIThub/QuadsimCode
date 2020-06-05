@@ -1,0 +1,92 @@
+# trajectory_follower:
+#   kp: [2.0, 2.0, 2.2]
+#   kd: [2.5, 2.5, 2.5]
+#   equilibrium_throttle: 0.54447
+#   max_throttle: 0.85
+#   min_altitude: 0.0
+
+altitude_controller:
+  kp: 1.0
+  kd: 1.0
+  ki: 1.0
+  equilibrium_throttle: 0.54447
+  max_throttle: 0.85
+  min_altitude: 1.0
+
+attitude_controller:
+  kp: 5.0
+  max_roll_rate: 1.57
+  max_pitch_rate: 1.57
+  max_yaw_rate: 0.785
+
+trajectory_generator:
+  kr: 3
+  time_scale: 1.0
+  # pringle
+  # members: [
+  #   {type: 'sin', data: [0., 5., 60., 0.]},
+  #   {type: 'sin', data: [0., 5., 30., 0.]},
+  #   {type: 'sin', data: [-20., 5., 60., rad(pi/2)]},
+  #   {type: 'sin', data: [0., 0., 0., 0.]},
+  # ]
+  ## circle
+  # members: [
+  #   {type: 'sin', data: [0., 5., 30., 0.]},
+  #   {type: 'sin', data: [0., 5., 30., rad(pi/2)]},
+  #   {type: 'lin', data: [-20., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), rad(-pi/15)]}
+  # ]
+  ## dizzy aggressive pringle (3x speed + yawing)
+  members: [
+    {type: 'sin', data: [0., 5., 20., 0.]},
+    {type: 'sin', data: [0., 5., 10., 0.]},
+    {type: 'sin', data: [-20., 5., 20., rad(pi/2)]},
+    {type: 'lin', data: [rad(-pi/2), rad(-pi/15)]},
+  ]
+  ## circle aggressive (3x speed)
+  # members: [
+  #   {type: 'sin', data: [0., 5., 10., 0.]},
+  #   {type: 'sin', data: [0., 5., 10., rad(pi/2)]},
+  #   {type: 'lin', data: [-20., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), rad(-pi/5)]}
+  # ]
+  ## waypoint
+  # members: [
+  #   {type: 'lin', data: [0., 0.]},
+  #   {type: 'lin', data: [250., 0.]},
+  #   {type: 'lin', data: [-250., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), 0.]}
+  # ]
+  ## straight line
+  # members: [
+  #   {type: 'lin', data: [0., 5.]},
+  #   {type: 'lin', data: [-20., 0.]},
+  #   {type: 'lin', data: [-3., 0.]},
+  #   {type: 'lin', data: [0, 0.]}
+  # ]
+
+feature_tracker:
+  display_img: True
+  max_features: 500
+  quality: 0.1
+  min_dist: 10.0
+
+optical_flow_controller:
+  img_size: [640, 480]
+  h_fov: 90
+  follow_option: 2  # optical flow command option: 0=collision_avoidance 1=terrain_following_only 2=wall_following 3=canyon_following
+  wall_option: 1  # flag to identify whether to follow wall on right or left: 0=left 1=right
+  k_terrain: 0.01
+  Dv_terrain: 30.0
+  k_wall: 0.01
+  Dv_wall: 30.0
+  k_canyon: 2.0
+
+velocity_controller:
+  Kd: [1.0, 1.0, 0.5]
+  equilibrium_throttle: 0.54447
+  max_throttle: 0.85
+  min_altitude: 0.0
+
+imu_integrator:
+  use_imu: false
