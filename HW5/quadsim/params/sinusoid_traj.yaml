@@ -1,0 +1,55 @@
+trajectory_generator:
+  kr: 3 # number of derivatives (int)
+  time_scale: 5.0
+
+  # create as many members as you want in a list
+
+  # sinusoidal members need 4 parameters:
+  # {type: 'sin', data: [offset, scale, period, phase_shift]}
+
+  # linear members need 2 parameters
+  # {type: 'lin', data: [initial_value, slope]}
+
+  # pringle
+  member_definitions: [
+    {type: 'sin', data: [0., 5., 60., 0.]},
+    {type: 'sin', data: [0., 5., 30., 0.]},
+    {type: 'sin', data: [-20., 5., 60., rad(pi/2)]},
+    {type: 'sin', data: [0., 0., 0., 0.]},
+  ]
+  ## circle
+  # member_definitions: [
+  #   {type: 'sin', data: [0., 5., 30., 0.]},
+  #   {type: 'sin', data: [0., 5., 30., rad(pi/2)]},
+  #   {type: 'lin', data: [-10., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), rad(-pi/15)]}
+  # ]
+  ## dizzy aggressive pringle (3x speed + yawing)
+  # member_definitions: [
+  #   {type: 'sin', data: [0., 5., 20., 0.]},
+  #   {type: 'sin', data: [0., 5., 10., 0.]},
+  #   {type: 'sin', data: [-20., 5., 20., rad(pi/2)]},
+  #   {type: 'lin', data: [rad(-pi/2), rad(-pi/15)]},
+  # ]
+  ## circle aggressive (3x speed)
+  # member_definitions: [
+  #   {type: 'sin', data: [0., 5., 10., 0.]},
+  #   {type: 'sin', data: [0., 5., 10., rad(pi/2)]},
+  #   {type: 'lin', data: [-20., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), rad(-pi/5)]}
+  # ]
+  ## waypoint
+  # member_definitions: [
+  #   {type: 'lin', data: [0., 0.]},
+  #   {type: 'lin', data: [250., 0.]},
+  #   {type: 'lin', data: [-250., 0.]},
+  #   {type: 'lin', data: [rad(-pi/2), 0.]}
+  # ]
+  ## straight line
+  # member_definitions: [
+  #   {type: 'lin', data: [0., 5.]},
+  #   {type: 'lin', data: [-20., 0.]},
+  #   {type: 'lin', data: [-3., 0.]},
+  #   {type: 'lin', data: [0, 0.]}
+  # ]
+

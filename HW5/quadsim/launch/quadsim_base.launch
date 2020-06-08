@@ -1,0 +1,26 @@
+<launch>
+
+  <!-- whether to launch pre-configured rqt_plot window -->
+  <arg name="plot" default="false"/>
+
+
+  <!-- rosflight_holodeck -->
+
+  <include file="$(find rosflight_holodeck)/launch/base.launch">
+    <arg name="rosflight_params_file" value="$(find quadsim)/params/rosflight_params_quadsim.yaml"/>
+  </include>
+
+  <!-- quadsim -->
+
+  <rosparam command="load" file="$(find quadsim)/params/quadsim.yaml"/>
+
+  <!-- rqt_plot pre-configured to plot inertial NED position -->
+  <!-- add more to "value" to plot extra variables -->
+  <!-- set arg "plot" to "false" above to disable plotting -->
+  <group if="$(arg plot)">
+    <include file="$(find quadsim)/launch/rqt_plotter.launch">
+      <arg name="field_names" value="/truth/NED/pose/pose/position/x:y:z"/>
+    </include>
+  </group>
+
+</launch>

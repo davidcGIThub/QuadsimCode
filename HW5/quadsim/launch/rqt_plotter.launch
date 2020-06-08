@@ -1,0 +1,7 @@
+<launch>
+    <arg name="field_names" 
+         default="/truth/NED/pose/pose/position/x:y:z"/>
+    
+    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot_gui" args="$(arg field_names)" />"
+
+</launch>

@@ -1,0 +1,34 @@
+<launch>
+
+  <!-- whether to launch pre-configured rqt_plot window -->
+  <arg name="plot" value="false"/>
+  <!-- set 'traj_type' to 0 for spline trajectory or 1 for sinusoidal -->
+  <arg name="traj_type" value="0"/>
+
+
+  <!-- quadsim -->
+
+  <include file="$(find quadsim)/launch/quadsim_base.launch">
+    <arg name="plot" value="$(arg plot)"/>
+  </include>
+
+  <node name="controller" pkg="quadsim" type="controller_node.py" output="screen" required="true"/>
+  <node name="feature_tracker" pkg="quadsim" type="feature_tracker_node.py" output="screen" required="true"/>
+
+  <!-- Trajectory Generator -->
+  <!-- trajectory type set by arg "traj_type" above -->
+
+  <!-- Spline/Waypoint Trajectory Generator -->
+  <arg name="traj_param_file" value="spline_traj.yaml" if="$(eval traj_type == 0)"/>
+  <arg name="traj_node" value="spline_traj_node.py" if="$(eval traj_type == 0)"/>
+
+  <!-- Sinusoid Trajectory Generator -->
+  <arg name="traj_param_file" value="sinusoid_traj.yaml" if="$(eval traj_type == 1)"/>
+  <arg name="traj_node" value="sinusoid_traj_node.py" if="$(eval traj_type == 1)"/>
+
+  <rosparam command="load" file="$(find quadsim)/params/$(arg traj_param_file)"/>
+  <node name="trajectory_generator" pkg="trajectorygenerator" type="$(arg traj_node)" output="screen" required="true">
+    <remap from="odom" to="truth/NED"/>
+  </node>
+
+</launch>

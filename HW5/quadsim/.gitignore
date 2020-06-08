@@ -1,0 +1,72 @@
+# MATLAB files & directories
+*.asv
+*.autosave
+*.mex*
+*.slxc
+slprj/
+sccprj/
+
+# LabVIEW files
+*.lvlps
+
+# LaTeX files
+*.toc
+*.log
+*.aux
+*.bbl
+*.blg
+*.idx
+*.ilg
+*.ind
+*.out
+*.fls
+.texpadtmp/
+*.synctex.gz
+
+# latexmk files
+*.fdb_latexmk
+
+# macos files & directories
+.DS_Store
+__MACOSX/
+
+# Microsoft Office
+~$*
+
+# Dropbox files
+.dropbox
+
+# Generic files (swap, etc.)
+*~
+.#*
+*.swp
+
+# Python files & directories
+*.pyc
+.ipynb_checkpoints/
+.mypy_cache/
+
+# compiled and helper directories
+build/
+devel/
+
+# subversion directories
+.svn/
+
+# LaTeX generated, production files
+quadrotorbook.pdf
+
+# other miscellaneous
+*.dot
+*.so
+
+# =====================================
+
+# for any JetBrains IDE:
+.idea/
+
+# vscode IDE:
+.vscode/
+
+# CMake
+cmake-build-*/
