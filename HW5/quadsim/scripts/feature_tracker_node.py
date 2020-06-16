@@ -14,6 +14,7 @@ from quadsim.msg import ImageData
 import controllers.feature_tracker as ft
 import utils.quaternion as quat
 
+
 class FeatureTrackerNode:
     def __init__(self):
         self.feature_tracker = self.setup_feature_tracker()
@@ -24,7 +25,7 @@ class FeatureTrackerNode:
         self.att = quat.identity()
 
         # Initialize ROS
-        self.cv_bridge = CvBridge() # converts ROS img to OpenCV img
+        self.cv_bridge = CvBridge()  # converts ROS img to OpenCV img
         rospy.Subscriber("holodeck/image", Image, self.imageCallback)
         rospy.Subscriber("pose", PoseStamped, self.poseCallback)
         self.img_data_pub = rospy.Publisher("image_data", ImageData,
@@ -68,7 +69,7 @@ class FeatureTrackerNode:
         rel_att = self.att_prev.inverse() @ self.att
         rel_pos = self.att.rotp(self.pos_prev - self.pos)
         return rel_pos, rel_att
-            
+
     def process_img(self, img):
         t = rospy.Time.now()
         self.img_data_msg.dt = t - self.t_prev
@@ -89,11 +90,12 @@ class FeatureTrackerNode:
         self.img_data_msg.feature_count = len(self.feature_tracker.features_paired)
         if self.img_data_msg.feature_count > 0:
             self.img_data_msg.features_prev = \
-                self.feature_tracker.features_paired[:,0,:].flatten().astype('int32').tolist()
+                self.feature_tracker.features_paired[:, 0, :].flatten().astype('int32').tolist()
             self.img_data_msg.features_next = \
-                self.feature_tracker.features_paired[:,1,:].flatten().astype('int32').tolist()
+                self.feature_tracker.features_paired[:, 1, :].flatten().astype('int32').tolist()
 
             self.img_data_pub.publish(self.img_data_msg)
+
 
 if __name__ == '__main__':
     rospy.init_node('feature_tracker', anonymous=True)
@@ -102,4 +104,3 @@ if __name__ == '__main__':
         ros_node.run()
     except rospy.ROSInterruptException:
         pass
-    

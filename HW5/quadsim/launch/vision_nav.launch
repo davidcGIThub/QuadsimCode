@@ -3,17 +3,33 @@
   <!-- whether to launch pre-configured rqt_plot window -->
   <arg name="plot" value="false"/>
 
+   <!-- Spline/Waypoint Trajectory Generator -->
+  <arg name="traj_param_file" value="spline_traj.yaml"/>
+  <arg name="traj_node" value="spline_traj_node.py"/>
+  <rosparam command="load" file="$(find quadsim)/params/$(arg traj_param_file)"/>
+  <node name="trajectory_generator" pkg="trajectorygenerator" type="$(arg traj_node)" output="screen" required="true">
+    <remap from="odom" to="truth/NED"/>
+  </node>
 
   <!-- quadsim -->
-
   <include file="$(find quadsim)/launch/quadsim_base.launch">
     <arg name="plot" value="$(arg plot)"/>
   </include>
 
-  <node name="point_triangulation" pkg="quadsim" type="point_triangulation_node.py" output="screen" required="true"/>
-  <!-- <node name="velocity_controller" pkg="quadsim" type="velocity_controller_node.py" output="screen" required="true"/> -->
-  <node name="feature_tracker" pkg="quadsim" type="feature_tracker_node.py" output="screen" required="true"/>
+  <!-- controller -->
+  <node name="controller" pkg="quadsim" type="controller_node.py" output="screen" required="true"/>
+
+  <!-- point_triangulation -->
+  <!-- <node name="feature_tracker" pkg="quadsim" type="feature_tracker_node.py" output="screen" required="true"/>
   <node name="imu_integrator" pkg="quadsim" type="imu_integrator_node.py" output="screen" required="true"/>
-  <node name="voxel_map" pkg="quadsim" type="voxel_map_node.py" output="screen" required="true"/>
+  <node name="point_triangulation" pkg="quadsim" type="point_triangulation_node.py" output="screen" required="true"/> -->
+
+  <!-- Voxel Map -->
+  <node name="voxel_map" pkg="quadsim" type="voxel_map_node.py" output="screen" required="true">
+    <remap from="triang_points" to="lidar"/>
+  </node>
+  <node name="quadsim_tf2" pkg="quadsim" type="quadsim_tf2.py" output="screen"/>
+  <node name="rviz_voxel" type="rviz" pkg="rviz" args="-d $(find quadsim)/config/voxel_visualization.rviz"/>
+  <node name="rviz_lidar" type="rviz" pkg="rviz" args="-d $(find quadsim)/config/lidar_visualization.rviz"/>
 
 </launch>

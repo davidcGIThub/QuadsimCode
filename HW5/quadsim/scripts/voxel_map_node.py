@@ -3,6 +3,7 @@
 # system imports
 import numpy as np
 import copy
+import matplotlib.pyplot as plt
 
 # ROS imports
 import rospy
@@ -15,11 +16,21 @@ from voxel_map import VoxelMap
 
 class VoxelMapNode:
     def __init__(self):
-        self.map = VoxelMap()
-        measurement_topic = "triang_points"
+        ns = 'voxel_map/'
+        self._visual_threshold = rospy.get_param(ns + 'visual_threshold')
+        voxels_per_side = rospy.get_param(ns + 'voxels_per_side')
+        width_on_a_side = rospy.get_param(ns + 'width_on_a_side')
+        initial_prob = rospy.get_param(ns + 'initial_prob')
+        pD = rospy.get_param(ns + 'pD')
+        pFA = rospy.get_param(ns + 'pFA')
+        ps = rospy.get_param(ns + 'ps')
+        pt = rospy.get_param(ns + 'pt')
+        self.map = VoxelMap(voxels_per_side, width_on_a_side, initial_prob, pD, pFA, ps, pt)
         rospy.Subscriber("truth/NED", Odometry, callback=self.state_cb, queue_size=1)
-        rospy.Subscriber(measurement_topic, PointCloud, callback=self.measurement_cb)
-        self.map_pub = rospy.Publisher("voxel_map", PointCloud)
+        rospy.Subscriber("triang_points", PointCloud, callback=self.measurement_cb)
+        self.map_pub = rospy.Publisher("voxel_map", PointCloud, queue_size=1)
+        self.vis_pub = rospy.Publisher("voxel_map_visual" , PointCloud, queue_size=1)
+        self.map_center_pub = rospy.Publisher("voxel_map_center", Odometry)
         self.state = State()
         self.blank_cloud = PointCloud()
         zero_point = Point32(0,0,0)
@@ -35,6 +46,7 @@ class VoxelMapNode:
                           position.z - self.state.pos[2]])
         self.map.shift_map(shift)
         self.state.pos = np.array([position.x, position.y, position.z])
+        self.publish_map_center()
 
     def measurement_cb(self, msg):
         num_points = len(msg.points)
@@ -71,10 +83,29 @@ class VoxelMapNode:
                     out_cloud.channels[point_it].name = "occupancy probability"
                     out_cloud.channels[point_it].values.append(self.map.prob_map[i,j,k])
                     point_it += 1
-        for i in range(len(out_cloud.points)):
-            print("channel" , out_cloud.channels[i].values)
-            print("point" , out_cloud.points[i])
+        self.publish_visual(out_cloud)
         self.map_pub.publish(out_cloud)
+
+    def publish_visual(self, probability_cloud):
+        vis_cloud = PointCloud()
+        vis_cloud.header.stamp = rospy.Time.now()
+        vis_cloud.header.frame_id = "ned"
+        num_points = len(probability_cloud.points)
+        for i in range(num_points):
+            probability = probability_cloud.channels[i].values[0]
+            #print("probability: " , probability)
+            if(probability > self._visual_threshold):
+                vis_cloud.points.append(probability_cloud.points[i])
+        self.vis_pub.publish(vis_cloud)
+        
+    def publish_map_center(self):
+        out_odom = Odometry()
+        out_odom.header.stamp = rospy.Time.now()
+        out_odom.header.frame_id = "ned"
+        out_odom.pose.pose.position.x = self.state.pos[0]-self.map.residual[0]
+        out_odom.pose.pose.position.y = self.state.pos[1]-self.map.residual[1]
+        out_odom.pose.pose.position.z = self.state.pos[2]-self.map.residual[2]
+        self.map_center_pub.publish(out_odom)
 
 if __name__ == '__main__':
     rospy.init_node('voxel_map', anonymous=True)

@@ -1,9 +1,17 @@
 import numpy as np
 
 class VoxelMap():
-    def __init__(self, voxels_per_side = 25, width_on_a_side = 100, initial_prob = 0.5):
-        self.N = voxels_per_side # This needs to be odd 
-        self.W = width_on_a_side # Width of the voxel map in m
+    def __init__(self, voxels_per_side = 25, width_on_a_side = 100, initial_prob = 0.5,
+         probDetection = 0.85, probFalseAlarm = 0.3, probStatic = 0.9 , probTransient = 0.2):
+        try:
+            if voxels_per_side % 2 == 0:
+                raise EvenInputVoxelsError
+            else:
+                self.voxels_per_side = voxels_per_side
+        except EvenInputVoxelsError:
+            self.voxels_per_side = 25
+        self.N = voxels_per_side 
+        self.W = width_on_a_side 
         self.radius = width_on_a_side/2
         self.initial_prob = initial_prob
         self.voxel_width = self.W/self.N
@@ -14,10 +22,10 @@ class VoxelMap():
         self.free_meas = np.zeros([self.N,self.N,self.N])
         self.prob_map = self.initial_prob*np.ones([self.N,self.N,self.N])
         self.residual = np.array([0.0,0.0,0.0])
-        self.pD = 0.85 # initial_prob
-        self.pFA = 0.3 # initial_prob
-        self.ps = 0.9 # initial_prob
-        self.pt = 0.2 # initial_prob
+        self.pD = probDetection
+        self.pFA = probFalseAlarm
+        self.ps = probStatic
+        self.pt = probTransient
 
     def set_params(self, pD = None, pFA = None, ps = None, pt = None):
         if pD is not None:
@@ -121,3 +129,9 @@ class VoxelMap():
                                                               str(coords_z[i]), 
                                                               str(vals[i]))
         return out_string
+
+class EvenInputVoxelsError(Exception):
+    """Exception to be raised when voxels per side input is even"""
+    
+    def __str__(self):
+        return f'The number of voxels per side must be odd: Using default value'

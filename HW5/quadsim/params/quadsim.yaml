@@ -3,7 +3,7 @@ trajectory_follower:
   kd: [2.5, 2.5, 2.5]
   equilibrium_throttle: 0.54447
   max_throttle: 0.85
-  min_altitude: 0.0
+  min_altitude: -5
   # kp: [0.4, 0.4, 0.15]
   # kd: [0.9, 0.9, 0.63]
 
@@ -53,3 +53,13 @@ velocity_controller:
 
 imu_integrator:
   use_imu: False
+
+voxel_map:
+  visual_threshold: 0.7
+  voxels_per_side: 25
+  width_on_a_side: 100
+  initial_prob: 0.5
+  pD: 0.85
+  pFA: 0.3
+  ps: 0.9
+  pt: 0.2
